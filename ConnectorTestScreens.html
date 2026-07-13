@@ -1,0 +1,20 @@
+<section id="connectorLab" class="page hidden">
+<header><div><h1>Connector Test Lab</h1><p>Test Microsoft Forms routes without constructing HTTP requests by hand.</p></div></header>
+<div class="cards">
+ <div class="card metric"><span>Connector Health</span><b id="connectorHealth">—</b></div>
+ <div class="card metric"><span>Receipts — 24 Hours</span><b id="connectorReceipts">—</b></div>
+ <div class="card metric"><span>Errors — 24 Hours</span><b id="connectorErrors">—</b></div>
+ <div class="card metric"><span>Total Receipts</span><b id="connectorTotal">—</b></div>
+</div>
+<div class="card">
+ <div class="circle-note"><strong>TEST LAB:</strong> These actions use fake pilot data. They do not submit the live Microsoft Forms.</div>
+ <div class="button-row">
+  <button class="primary" onclick="testDogConnector()">Test Dog Intake Route</button>
+  <button class="primary" onclick="testReferenceConnector()">Test Reference Route</button>
+ </div>
+</div>
+<div class="detail-grid topgap">
+ <div class="card"><h2>Recent Connector Tests</h2><div id="connectorTests"></div></div>
+ <div class="card"><h2>Recent Connector Errors</h2><div id="connectorErrorList"></div></div>
+</div>
+</section>

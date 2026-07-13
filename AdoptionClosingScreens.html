@@ -1,0 +1,15 @@
+<section id="adoptionClosing" class="page hidden">
+<header><div><h1>Adoption Closing</h1><p>Complete the final circle so no dog or paperwork is left behind.</p></div></header>
+<div class="card form-card">
+ <label>Adoption ID<input id="closingAdoptionID"></label>
+ <div class="button-row"><button class="secondary" onclick="loadAdoptionClosing()">Load</button><button class="secondary" onclick="reconcileAdoptionClosing()">Reconcile Records</button></div>
+</div>
+<div id="closingSummary" class="card topgap hidden"></div>
+<div id="closingItems" class="topgap"></div>
+<div class="actions"><button id="closeAdoptionBtn" class="primary hidden" onclick="closeAdoptionNow()">Close Adoption & Complete Circle</button></div>
+</section>
+
+<section id="closingAttention" class="page hidden">
+<header><div><h1>Adoptions Needing Attention</h1><p>Open adoptions with required closing items still missing.</p></div></header>
+<div id="closingAttentionList"></div>
+</section>

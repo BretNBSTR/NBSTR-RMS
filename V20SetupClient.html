@@ -1,0 +1,22 @@
+<script>
+function loadV20Setup(){google.script.run.withSuccessHandler(renderV20).withFailureHandler(showError).getV20Dashboard()}
+function renderV20(d){
+ document.getElementById('v20Percent').textContent=d.audit.setup.percent+'%';
+ document.getElementById('v20Ready').textContent=d.audit.ready?'READY':'BLOCKED';
+ document.getElementById('v20Closing').textContent=d.closingAttention;
+ document.getElementById('v20Finance').textContent=d.finance.needsReview||0;
+ document.getElementById('v20Checks').innerHTML=d.audit.setup.checks.map(x=>`<div class="list-item"><div class="item-title">${esc(x.name)}</div><div class="meta">${esc(x.status)}${x.detail?' · '+esc(x.detail):''}</div></div>`).join('');
+ document.getElementById('v20Blockers').innerHTML=d.audit.blockers.length?d.audit.blockers.map(x=>`<div class="list-item high"><div class="item-title">${esc(x)}</div></div>`).join(''):'<div class="empty">No launch blockers found. ✓</div>';
+}
+function runV20Wizard(){google.script.run.withSuccessHandler(r=>{toast(r.ok?'Setup wizard complete.':'Setup wizard found an issue.');loadV20Setup()}).withFailureHandler(showError).runNBSTRSetupWizardV20()}
+function seedV20(){if(!confirm('Create fake pilot records only?'))return;google.script.run.withSuccessHandler(r=>{toast(r.message);loadV20Setup()}).withFailureHandler(showError).seedV20Pilot()}
+function auditV20(){
+ google.script.run
+  .withSuccessHandler(r=>{
+   toast(r.ready?'Full audit passed.':'Full audit completed. Launch remains blocked.');
+   loadV20Setup();
+  })
+  .withFailureHandler(showError)
+  .runV20PrerequisiteAudit();
+}
+</script>

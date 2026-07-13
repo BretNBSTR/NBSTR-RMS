@@ -1,0 +1,11 @@
+<section id="communications" class="page hidden">
+<header><div><h1>Adopter Communications</h1><p>Preview approved NBSTR messages before sending.</p></div></header>
+<div class="card form-card">
+ <label>Template<select id="commTemplate"><option>Application Approved</option><option>Application Denied</option><option>More Information Needed</option><option>Adopter Education Packet</option><option>Adoption Follow-Up</option></select></label>
+ <label>Record Type<select id="commRecordType"><option>Application</option><option>Adoption</option></select></label>
+ <label>Application or Adoption ID<input id="commRecordID"></label>
+ <label>Decision reason / information needed<textarea id="commExtra"></textarea></label>
+ <div class="button-row"><button class="secondary" onclick="previewComm()">Preview</button><button class="primary" onclick="sendComm()">Send Email</button></div>
+</div>
+<div class="card topgap"><h2>Preview</h2><div id="commRecipient" class="meta"></div><h3 id="commSubject"></h3><pre id="commBody" class="communication-preview"></pre></div>
+</section>

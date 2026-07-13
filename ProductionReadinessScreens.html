@@ -1,0 +1,19 @@
+<section id="productionReadiness" class="page hidden">
+<header><div><h1>Production Readiness</h1><p>Launch gates, backups, permissions, and controlled live cohort.</p></div></header>
+<div class="cards">
+ <div class="card metric"><span>Launch Status</span><b id="launchStatus">—</b></div>
+ <div class="card metric"><span>Critical Items Open</span><b id="criticalOpen">—</b></div>
+ <div class="card metric"><span>Pilot Passed</span><b id="productionPilotPass">—</b></div>
+ <div class="card metric"><span>Live Cohort</span><b id="cohortCount">—</b></div>
+</div>
+<div class="card">
+ <div class="button-row"><button class="primary" onclick="initProduction()">Initialize Readiness</button><button class="secondary" onclick="makeBackup()">Create Backup Now</button></div>
+</div>
+<div class="detail-grid topgap">
+ <div class="card"><h2>Launch Checklist</h2><div id="launchChecklist" class="list loading">Loading…</div></div>
+ <div>
+  <div class="card"><h2>Recent Backups</h2><div id="backupList"></div></div>
+  <div class="card topgap"><h2>Controlled Live Cohort</h2><div id="cohortList"></div></div>
+ </div>
+</div>
+</section>

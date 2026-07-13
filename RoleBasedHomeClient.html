@@ -1,0 +1,24 @@
+<script>
+function loadVolunteerHome(){
+ google.script.run.withSuccessHandler(renderVolunteerHome).withFailureHandler(showError).getVolunteerHomeV15();
+}
+function renderVolunteerHome(h){
+ document.getElementById('homeGreeting').textContent='Hi '+h.greetingName+' — here is what needs attention';
+ document.getElementById('homeRoleLine').textContent=h.roles.length?h.roles.join(' · '):'No RMS role has been assigned yet.';
+ document.getElementById('homeOpen').textContent=h.totalOpen;
+ document.getElementById('homeHigh').textContent=h.highPriority;
+ document.getElementById('homeRoleCount').textContent=h.roles.length;
+ document.getElementById('homeSections').innerHTML=h.sections.length?h.sections.map(s=>`<div class="card topgap"><h2>${esc(s.title)}</h2>${s.tasks.length?s.tasks.map(t=>`<div class="list-item"><div class="item-title">${esc(t.title)}</div><div class="meta"><span class="badge">${esc(t.priority)}</span>${esc(t.status)}${t.dueAt?' · Due '+formatDate(t.dueAt):''}</div><div class="button-row compact"><button class="primary tiny" onclick="openHomeTask('${esc(t.id)}')">Open Work</button></div></div>`).join(''):'<div class="empty">Nothing waiting for you. ✓</div>'}</div>`).join(''):'<div class="card topgap"><div class="empty">Ask an RMS Administrator to assign your volunteer role.</div></div>';
+ const admin=h.roles.includes('RMS Administrator');
+ document.getElementById('adminAttentionCard').style.display=admin?'block':'none';
+ if(admin) document.getElementById('homeAttention').innerHTML=h.attention.length?h.attention.map(a=>`<div class="list-item ${a.priority==='High'?'high':''}"><div class="item-title">${esc(a.title)}</div><div class="meta">${esc(a.type)} · ${esc(a.priority)}</div><div class="meta">${esc(a.detail||'')}</div></div>`).join(''):'<div class="empty">No Nothing Forgotten alerts. ✓</div>';
+}
+function openHomeTask(taskID){
+ google.script.run.withSuccessHandler(r=>{
+  if(r.page==='application') openApplication(r.recordID);
+  else if(r.page==='dog'){CURRENT_DOG_ID=r.recordID;openDog(r.recordID);}
+  else if(r.page==='rescueRequest' && typeof openRescueRequest==='function') openRescueRequest(r.recordID);
+ else showPage('volunteerHome');
+ }).withFailureHandler(showError).getTaskQuickActionV15(taskID);
+}
+</script>

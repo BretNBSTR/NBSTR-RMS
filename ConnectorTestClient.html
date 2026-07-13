@@ -1,0 +1,15 @@
+<script>
+function loadConnectorLab(){
+ google.script.run.withSuccessHandler(renderConnectorHealth).withFailureHandler(showError).getConnectorHealthV14();
+}
+function renderConnectorHealth(h){
+ document.getElementById('connectorHealth').textContent=h.status;
+ document.getElementById('connectorReceipts').textContent=h.receipts24h;
+ document.getElementById('connectorErrors').textContent=h.errors24h;
+ document.getElementById('connectorTotal').textContent=h.totalReceipts;
+ document.getElementById('connectorTests').innerHTML=h.recentTests.length?h.recentTests.map(t=>`<div class="list-item"><div class="item-title">${esc(t.TestType)} Connector — ${esc(t.Status)}</div><div class="meta">${formatDate(t.TestAt)}${t.RelatedRecordID?' · '+esc(t.RelatedRecordID):''}</div><div class="meta">${esc(t.Message||'')}</div></div>`).join(''):'<div class="empty">No connector tests recorded.</div>';
+ document.getElementById('connectorErrorList').innerHTML=h.recentErrors.length?h.recentErrors.map(e=>`<div class="list-item high"><div class="item-title">Connector Error</div><div class="meta">${formatDate(e.ErrorAt)}</div><div class="meta">${esc(e.Message||'')}</div></div>`).join(''):'<div class="empty">No connector errors recorded. ✓</div>';
+}
+function testDogConnector(){google.script.run.withSuccessHandler(r=>{toast(r.message);loadConnectorLab()}).withFailureHandler(showError).runDogConnectorSampleV14()}
+function testReferenceConnector(){google.script.run.withSuccessHandler(r=>{toast(r.message);loadConnectorLab()}).withFailureHandler(showError).runReferenceConnectorSampleV14()}
+</script>

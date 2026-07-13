@@ -1,0 +1,22 @@
+<script>
+function openCircleOfCare(){
+ document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+ document.getElementById('circleOfCare').classList.remove('hidden');
+ google.script.run.withSuccessHandler(renderCircleOfCare).withFailureHandler(showError).getCircleOfCareStatus(CURRENT_DOG_ID);
+}
+function renderCircleOfCare(c){
+ document.getElementById('careDogMeta').textContent=c.name+' · '+c.dogID;
+ document.getElementById('carePercent').textContent=c.percent+'%';
+ document.getElementById('careCompleted').textContent=c.requiredComplete+' / '+c.requiredTotal;
+ document.getElementById('careMissing').textContent=c.missing.length;
+ document.getElementById('careDocs').textContent=c.documentCount;
+ document.getElementById('careStages').innerHTML=c.stages.map(s=>`<div class="care-stage ${s.complete?'done':'open'}"><div class="care-icon">${s.complete?'✓':'!'}</div><div><div class="item-title">${esc(s.name)}</div><div class="meta">${esc(s.detail)}</div></div></div>`).join('');
+ document.getElementById('careAlerts').innerHTML=c.missing.length?c.missing.map(m=>`<div class="list-item high"><div class="item-title">${esc(m.label)}</div><div class="meta">${esc(m.requiredStatus)} · Open</div></div>`).join(''):'<div class="empty">No open intake checklist items. ✓</div>';
+}
+function loadDogAttention(){
+ google.script.run.withSuccessHandler(rows=>{
+  const el=document.getElementById('dogAttentionList');el.classList.remove('loading');
+  el.innerHTML=rows.length?rows.map(d=>`<div class="list-item clickable" onclick="CURRENT_DOG_ID='${esc(d.dogID)}';openCircleOfCare()"><div class="matchscore">${esc(d.percent)}%</div><div class="item-title">${esc(d.name)}</div><div class="meta">${esc(d.missing.map(x=>x.label).join(' · ')||'Journey stage incomplete')}</div></div>`).join(''):'<div class="empty">All active dogs have complete tracked care items. ✓</div>';
+ }).withFailureHandler(showError).getNothingForgottenDogs();
+}
+</script>

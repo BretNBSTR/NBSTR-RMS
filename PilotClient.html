@@ -1,0 +1,18 @@
+<script>
+function loadPilot(){
+ google.script.run.withSuccessHandler(s=>{
+  document.getElementById('pilotTotal').textContent=s.total;
+  document.getElementById('pilotPass').textContent=s.pass;
+  document.getElementById('pilotFail').textContent=s.fail;
+  document.getElementById('pilotOpen').textContent=s.blocked+s.notTested;
+ }).withFailureHandler(showError).getPilotSummary();
+ google.script.run.withSuccessHandler(renderPilotTests).withFailureHandler(showError).getPilotTestsForUI();
+}
+function renderPilotTests(rows){
+ const el=document.getElementById('pilotTests');el.classList.remove('loading');
+ el.innerHTML=rows.length?rows.map(t=>`<div class="list-item"><div class="item-title">${esc(t.TestName)}</div><div class="meta">${esc(t.ExpectedResult)}</div><div class="meta"><span class="badge">${esc(t.TestStatus)}</span>${t.RecordID?esc(t.RecordID):''}</div><div class="button-row compact"><button class="secondary tiny" onclick="pilotResult('${esc(t.PilotTestID)}','Pass')">Pass</button><button class="secondary tiny" onclick="pilotResult('${esc(t.PilotTestID)}','Fail')">Fail</button><button class="secondary tiny" onclick="pilotResult('${esc(t.PilotTestID)}','Blocked')">Blocked</button></div></div>`).join(''):'<div class="empty">Initialize the pilot to create the checklist.</div>';
+}
+function initializePilot(){google.script.run.withSuccessHandler(r=>{toast(r.message);loadPilot()}).withFailureHandler(showError).initializeNBSTRPilotV10()}
+function seedPilot(){if(!confirm('Create fake pilot applications and rescue requests?'))return;google.script.run.withSuccessHandler(r=>{toast(r.message);loadPilot()}).withFailureHandler(showError).seedNBSTRPilotData()}
+function pilotResult(id,status){const recordID=prompt('Related test record ID (optional):')||'';const notes=prompt('Test notes (optional):')||'';google.script.run.withSuccessHandler(rows=>{renderPilotTests(rows);loadPilot()}).withFailureHandler(showError).updatePilotTest(id,status,notes,recordID)}
+</script>

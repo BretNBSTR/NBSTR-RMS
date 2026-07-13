@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NBSTR RMS</title>
+
+  <style>
+    :root {
+      --primary: #315b45;
+      --primary-dark: #234534;
+      --background: #f4f6f4;
+      --card: #ffffff;
+      --border: #d9dfdb;
+      --text: #24302a;
+      --muted: #6b756f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      width: 235px;
+      background: var(--primary-dark);
+      color: white;
+      padding: 24px 16px;
+    }
+
+    nav h1 {
+      font-size: 22px;
+      margin: 0 0 4px;
+    }
+
+    nav p {
+      margin: 0 0 24px;
+      opacity: .75;
+      font-size: 13px;
+    }
+
+    nav button {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      text-align: left;
+      padding: 11px 12px;
+      margin: 3px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    nav button:hover {
+      background: rgba(255,255,255,.12);
+    }
+
+    main {
+      flex: 1;
+      padding: 30px;
+      max-width: 1400px;
+    }
+
+    .page.hidden { display: none; }
+
+    header {
+      margin-bottom: 22px;
+    }
+
+    header h1 {
+      margin: 0 0 5px;
+    }
+
+    header p, .meta {
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .metric b {
+      font-size: 26px;
+    }
+
+    .topgap { margin-top: 18px; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button.primary, button.secondary {
+      padding: 9px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--primary);
+      color: white;
+      border: 1px solid var(--primary);
+    }
+
+    button.secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .tiny { font-size: 12px; padding: 6px 9px !important; }
+
+    .list-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .item-title { font-weight: 600; }
+
+    .empty {
+      padding: 18px 0;
+      color: var(--muted);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 800px) {
+      .app { display: block; }
+      nav { width: 100%; }
+      .detail-grid { grid-template-columns: 1fr; }
+      main { padding: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <nav>
+    <h1>NBSTR RMS</h1>
+    <p>Rescue Management System</p>
+
+    <button onclick="showPage('volunteerHome')">My Work</button>
+    <button onclick="showPage('dogMatching')">Applicant Matching</button>
+    <button onclick="showPage('referenceEntry')">Reference Check</button>
+    <button onclick="showPage('pilot')">Controlled Pilot</button>
+    <button onclick="showPage('v20Setup')">Pilot Setup</button>
+  </nav>
+
+  <main>
+
+    <?!= HtmlService.createHtmlOutputFromFile('RoleBasedHomeScreens').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('MatchingScreens').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('PilotScreens').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('V20SetupScreen').getContent(); ?>
+
+  </main>
+
+</div>
+
+<script>
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(page) {
+    page.classList.add('hidden');
+  });
+
+  var page = document.getElementById(name);
+
+  if (page) {
+    page.classList.remove('hidden');
+  }
+
+if (name === 'volunteerHome' && typeof loadVolunteerHome === 'function') {
+  loadVolunteerHome();
+}
+  if (name === 'pilot' && typeof loadPilot === 'function') {
+    loadPilot();
+  }
+
+  if (name === 'v20Setup' && typeof loadV20Setup === 'function') {
+    loadV20Setup();
+  }
+}
+
+function esc(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function showError(error) {
+  alert(error && error.message ? error.message : error);
+}
+
+function toast(message) {
+  alert(message);
+}
+</script>
+
+<?!= HtmlService.createHtmlOutputFromFile('RoleBasedHomeClient').getContent(); ?>
+<?!= HtmlService.createHtmlOutputFromFile('MatchingClient').getContent(); ?>
+<?!= HtmlService.createHtmlOutputFromFile('PilotClient').getContent(); ?>
+<?!= HtmlService.createHtmlOutputFromFile('V20SetupClient').getContent(); ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  showPage('volunteerHome');
+});
+</script>
+
+</body>
+</html>

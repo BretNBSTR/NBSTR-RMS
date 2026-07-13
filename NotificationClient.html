@@ -1,0 +1,17 @@
+<script>
+function loadNotificationSettings(){
+ google.script.run.withSuccessHandler(p=>{
+  document.getElementById('notifyUrgent').checked=String(p.ImmediateUrgent).toLowerCase()==='true';
+  document.getElementById('notifyDigest').checked=String(p.DailyDigest).toLowerCase()==='true';
+ }).withFailureHandler(showError).getMyNotificationPreferencesV16();
+}
+function saveNotificationSettings(){
+ const data={
+  immediateUrgent:document.getElementById('notifyUrgent').checked,
+  dailyDigest:document.getElementById('notifyDigest').checked,
+  digestHour:7
+ };
+ google.script.run.withSuccessHandler(()=>toast('Notification settings saved.'))
+  .withFailureHandler(showError).saveNotificationPreferencesV16(data);
+}
+</script>

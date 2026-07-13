@@ -1,0 +1,33 @@
+<script>
+let CURRENT_DOG_ID='';
+function loadDogs(){
+ google.script.run.withSuccessHandler(rows=>{
+  const el=document.getElementById('dogList');el.classList.remove('loading');
+  el.innerHTML=rows.length?rows.map(d=>`<div class="list-item clickable" onclick="openDog('${esc(d.id)}')"><div class="item-title">${esc(d.name)} · ${esc(d.breed)}</div><div class="meta"><span class="badge">${esc(d.status)}</span>${esc(d.foster)}${d.origin?' · From '+esc(d.origin):''}</div></div>`).join(''):'<div class="empty">No dogs recorded.</div>';
+ }).withFailureHandler(showError).getDogsForUI();
+}
+function openDog(id){CURRENT_DOG_ID=id;google.script.run.withSuccessHandler(renderDog).withFailureHandler(showError).getDogProfileForUI(id)}
+function renderDog(d){
+ CURRENT_DOG_ID=d.dog.DogID;
+ document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+ document.getElementById('dogProfile').classList.remove('hidden');
+ document.getElementById('dogName').textContent=d.dog.Name;
+ document.getElementById('dogMeta').textContent=d.dog.DogID+' · '+d.dog.LifecycleStatus;
+ const facts=[['Breed',d.dog.Breed],['Sex',d.dog.Sex],['Current Weight',d.dog.WeightCurrent?d.dog.WeightCurrent+' lbs':''],['Origin',[d.dog.OriginCity,d.dog.OriginState].filter(Boolean).join(', ')],['Foster Home',d.dog.CurrentFosterHomeID],['PetPoint ID',d.dog.PetPointID||'Pending'],['Adoption Readiness',d.dog.AdoptionReadinessStatus]];
+ document.getElementById('dogFacts').innerHTML=facts.map(x=>`<div class="fact"><span>${esc(x[0])}</span><div>${esc(x[1]||'Unknown')}</div></div>`).join('');
+ document.getElementById('intakeChecklist').innerHTML=d.checklist.map(i=>`<div class="list-item"><div class="item-title">${esc(i.ItemLabel)}</div><div class="meta"><span class="badge">${esc(i.RequiredStatus)}</span>${esc(i.CompletionStatus)}</div>${i.CompletionStatus==='Open'?`<button class="secondary smallbtn" onclick="completeIntake('${esc(i.IntakeChecklistID)}')">Mark Complete</button>`:''}</div>`).join('');
+ document.getElementById('medicalList').innerHTML=d.medical.length?d.medical.map(m=>`<div class="list-item"><div class="item-title">${esc(m.EventType)} · ${formatDate(m.EventDate)}</div><div class="meta">${esc(m.Summary)}</div></div>`).join(''):'<div class="empty">No medical events recorded yet.</div>';
+ document.getElementById('dogTimeline').innerHTML=d.timeline.length?d.timeline.map(t=>`<div class="list-item"><div class="item-title">${esc(t.Summary)}</div><div class="meta">${formatDate(t.EventAt)}</div></div>`).join(''):'<div class="empty">No timeline events.</div>';
+}
+function completeIntake(id){const n=prompt('Optional completion note:')||'';google.script.run.withSuccessHandler(renderDog).withFailureHandler(showError).completeIntakeItem(id,n)}
+function showMedicalForm(){document.getElementById('medicalForm').classList.remove('hidden');document.getElementById('medDate').value=new Date().toISOString().slice(0,10)}
+function saveMedicalEvent(){
+ const data={dogID:CURRENT_DOG_ID,eventDate:document.getElementById('medDate').value,eventType:document.getElementById('medType').value,summary:document.getElementById('medSummary').value,cost:document.getElementById('medCost').value,nextDueDate:document.getElementById('medNext').value};
+ google.script.run.withSuccessHandler(d=>{toast('Medical event added.');document.getElementById('medicalForm').classList.add('hidden');renderDog(d)}).withFailureHandler(showError).addDogMedicalEvent(data);
+}
+function acceptRequestUI(){
+ const name=prompt('Enter the one official NBSTR name for this dog:');
+ if(!name||!name.trim())return;
+ google.script.run.withSuccessHandler(r=>{toast(r.message);openDog(r.dogID)}).withFailureHandler(showError).officiallyAcceptRequest(CURRENT_REQUEST_ID,name);
+}
+</script>

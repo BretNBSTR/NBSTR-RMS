@@ -1,0 +1,17 @@
+<section id="pilot" class="page hidden">
+<header><div><h1>v1.0 Controlled Pilot</h1><p>Development testing before any live NBSTR workflow is connected.</p></div></header>
+<div class="cards">
+ <div class="card metric"><span>Total Tests</span><b id="pilotTotal">—</b></div>
+ <div class="card metric"><span>Passed</span><b id="pilotPass">—</b></div>
+ <div class="card metric"><span>Failed</span><b id="pilotFail">—</b></div>
+ <div class="card metric"><span>Not Tested / Blocked</span><b id="pilotOpen">—</b></div>
+</div>
+<div class="card">
+ <div class="circle-note"><strong>PILOT ONLY:</strong> Use fake applicants and fake dogs. Do not connect the live application or Dog Entry Form triggers yet.</div>
+ <div class="button-row">
+  <button class="primary" onclick="initializePilot()">Initialize Pilot</button>
+  <button class="secondary" onclick="seedPilot()">Seed Fake Pilot Data</button>
+ </div>
+</div>
+<div class="card topgap"><h2>Pilot Test Checklist</h2><div id="pilotTests" class="list loading">Loading…</div></div>
+</section>

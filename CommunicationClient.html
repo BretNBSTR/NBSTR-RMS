@@ -1,0 +1,31 @@
+<script>
+let CURRENT_COMM_PREVIEW=null;
+function loadCommunications(){}
+function commExtraData(){
+ const text=document.getElementById('commExtra').value||'';
+ const name=document.getElementById('commTemplate').value;
+ return name==='Application Denied'?{DECISION_REASON:text}:name==='More Information Needed'?{INFORMATION_NEEDED:text}:{};
+}
+function previewComm(){
+ google.script.run.withSuccessHandler(p=>{
+  CURRENT_COMM_PREVIEW=p;
+  document.getElementById('commRecipient').textContent='To: '+p.recipientEmail;
+  document.getElementById('commSubject').textContent=p.subject;
+  document.getElementById('commBody').textContent=p.body;
+ }).withFailureHandler(showError).previewCommunicationV17(
+  document.getElementById('commTemplate').value,
+  document.getElementById('commRecordType').value,
+  document.getElementById('commRecordID').value,
+  commExtraData()
+ );
+}
+function sendComm(){
+ if(!confirm('Send this NBSTR email now?'))return;
+ google.script.run.withSuccessHandler(r=>toast(r.message)).withFailureHandler(showError).sendCommunicationV17(
+  document.getElementById('commTemplate').value,
+  document.getElementById('commRecordType').value,
+  document.getElementById('commRecordID').value,
+  commExtraData()
+ );
+}
+</script>

@@ -1,0 +1,18 @@
+<script>
+function loadProductionReadiness(){
+ google.script.run.withSuccessHandler(renderProductionReadiness).withFailureHandler(showError).getProductionReadiness();
+}
+function renderProductionReadiness(r){
+ document.getElementById('launchStatus').textContent=r.launchReady?'READY':'NOT READY';
+ document.getElementById('criticalOpen').textContent=r.criticalOpen;
+ document.getElementById('productionPilotPass').textContent=r.pilot.pass+' / '+r.pilot.total;
+ document.getElementById('cohortCount').textContent=r.cohort.length;
+ const el=document.getElementById('launchChecklist');el.classList.remove('loading');
+ el.innerHTML=r.items.length?r.items.map(i=>`<div class="list-item"><div class="item-title">${esc(i.ItemName)}</div><div class="meta">${esc(i.Category)} · ${String(i.Critical).toLowerCase()==='true'?'Critical':'Standard'} · <span class="badge">${esc(i.Status)}</span></div><div class="button-row compact"><button class="secondary tiny" onclick="launchResult('${esc(i.LaunchChecklistID)}','Complete')">Complete</button><button class="secondary tiny" onclick="launchResult('${esc(i.LaunchChecklistID)}','Blocked')">Blocked</button><button class="secondary tiny" onclick="launchResult('${esc(i.LaunchChecklistID)}','Open')">Reopen</button></div></div>`).join(''):'<div class="empty">Initialize Production Readiness.</div>';
+ document.getElementById('backupList').innerHTML=r.backups.length?r.backups.map(b=>`<div class="list-item"><div class="item-title">${esc(b.BackupType)}</div><div class="meta">${formatDate(b.CreatedAt)} · ${esc(b.Notes||'')}</div></div>`).join(''):'<div class="empty">No RMS backups recorded.</div>';
+ document.getElementById('cohortList').innerHTML=r.cohort.length?r.cohort.map(c=>`<div class="list-item"><div class="item-title">${esc(c.RecordType)} · ${esc(c.RecordID)}</div><div class="meta">${formatDate(c.AddedAt)} · ${esc(c.Notes||'')}</div></div>`).join(''):'<div class="empty">No live cohort records yet.</div>';
+}
+function initProduction(){google.script.run.withSuccessHandler(r=>{toast(r.message);loadProductionReadiness()}).withFailureHandler(showError).initializeProductionReadinessV11()}
+function makeBackup(){const n=prompt('Backup note (optional):')||'';google.script.run.withSuccessHandler(r=>{toast(r.message);loadProductionReadiness()}).withFailureHandler(showError).createRMSBackup(n)}
+function launchResult(id,status){const n=prompt('Checklist note (optional):')||'';google.script.run.withSuccessHandler(renderProductionReadiness).withFailureHandler(showError).updateLaunchChecklistItem(id,status,n)}
+</script>

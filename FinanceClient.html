@@ -1,0 +1,27 @@
+<script>
+function loadFinanceReview(){
+ google.script.run.withSuccessHandler(renderFinanceReview).withFailureHandler(showError).getFinanceReviewV19();
+}
+function renderFinanceReview(r){
+ document.getElementById('finReview').textContent=r.needsReview;
+ document.getElementById('finUnreconciled').textContent=r.unreconciled;
+ document.getElementById('finGross').textContent='$'+Number(r.gross).toFixed(2);
+ document.getElementById('finFees').textContent='$'+Number(r.fees).toFixed(2);
+ document.getElementById('financeRows').innerHTML=r.rows.length?r.rows.map(x=>`
+ <div class="list-item">
+  <div class="item-title">${esc(x.PaymentProcessor)} · $${Number(x.GrossAmount||0).toFixed(2)} · ${esc(x.TransactionType)}</div>
+  <div class="meta">${esc(x.PayerName||x.PayerEmail||'Unknown payer')} · Fee $${Number(x.ProcessorFee||0).toFixed(2)} · Net $${Number(x.NetAmount||0).toFixed(2)}</div>
+  <div class="meta">${esc(x.QuickBooksStatus)} · ${esc(x.ReconciliationStatus)}${x.DogID?' · Dog '+esc(x.DogID):''}</div>
+  <button class="secondary tiny" onclick="reviewFinance('${esc(x.FinanceTransactionID)}')">Review</button>
+ </div>`).join(''):'<div class="empty">No finance transactions need review. ✓</div>';
+}
+function reviewFinance(id){
+ const transactionType=prompt('Type: Adoption Fee, Application Donation, Donation, Veterinary Expense, Other')||'Other';
+ const dogID=prompt('Dog ID, if this transaction belongs to a dog (optional):')||'';
+ const qb=prompt('QuickBooks reference or note (optional):')||'';
+ google.script.run.withSuccessHandler(renderFinanceReview).withFailureHandler(showError).updateFinanceReviewV19(id,{
+  transactionType:transactionType,dogID:dogID,quickBooksStatus:'Reviewed',
+  quickBooksReference:qb,reconciliationStatus:'Reconciled',notes:''
+ });
+}
+</script>

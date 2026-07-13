@@ -1,0 +1,27 @@
+<section id="dogs" class="page hidden">
+<header><div><h1>Dogs</h1><p>Every dog from intake through adoption.</p></div></header>
+<div class="card"><div id="dogList" class="list loading">Loading…</div></div>
+</section>
+
+<section id="dogProfile" class="page hidden">
+<header><div><button class="linkbtn" onclick="showPage('dogs')">← Dogs</button><h1 id="dogName">Dog Profile</h1><p id="dogMeta"></p></div></header>
+<div class="detail-grid">
+<div>
+ <div class="card"><h2>Circle of Care</h2><div id="dogFacts"></div></div>
+ <div class="card topgap"><h2>Intake Checklist</h2><div id="intakeChecklist"></div></div>
+</div>
+<div>
+ <div class="card"><h2>Medical Timeline</h2><div id="medicalList"></div>
+ <button class="secondary smallbtn" onclick="showMedicalForm()">+ Add Medical Event</button>
+ <div id="medicalForm" class="hidden topgap">
+  <label>Date<input id="medDate" type="date"></label>
+  <label>Type<select id="medType"><option>Exam</option><option>Vaccine</option><option>Test</option><option>Surgery</option><option>Dental</option><option>Medication</option><option>Weight</option><option>Other</option></select></label>
+  <label>Summary<textarea id="medSummary"></textarea></label>
+  <label>Cost<input id="medCost" type="number" min="0" step=".01"></label>
+  <label>Next Due Date<input id="medNext" type="date"></label>
+  <button class="primary" onclick="saveMedicalEvent()">Save Medical Event</button>
+ </div></div>
+ <div class="card topgap"><h2>Timeline</h2><div id="dogTimeline"></div></div>
+</div>
+</div>
+</section>

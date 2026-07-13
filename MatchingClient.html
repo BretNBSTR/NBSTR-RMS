@@ -1,0 +1,18 @@
+<script>
+function openDogMatching(){
+ document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+ document.getElementById('dogMatching').classList.remove('hidden');
+ document.getElementById('matchDogMeta').textContent=CURRENT_DOG_ID;
+ google.script.run.withSuccessHandler(rows=>{
+  const el=document.getElementById('applicantMatches');el.classList.remove('loading');
+  el.innerHTML=rows.length?rows.map(a=>`<div class="list-item"><div class="matchscore">${esc(a.score)}%</div><div class="item-title">${esc(a.name)} · ${esc(a.applicationID)}</div><div class="meta">${esc([a.city,a.state].filter(Boolean).join(', '))}</div>${a.preferences.length?`<div class="meta">${esc(a.preferences.join(' · '))}</div>`:''}${a.reasons.length?`<div class="meta">${esc(a.reasons.join(' · '))}</div>`:''}<div class="button-row compact"><button class="secondary tiny" onclick="setApplicantMatch('${esc(a.applicationID)}','Foster Reviewing')">Foster Reviewing</button><button class="primary tiny" onclick="setApplicantMatch('${esc(a.applicationID)}','Match Candidate')">Match Candidate</button><button class="secondary tiny" onclick="setApplicantMatch('${esc(a.applicationID)}','Not Selected')">Not Selected</button></div></div>`).join(''):'<div class="empty">No approved applicants are currently Ready to Match.</div>';
+ }).withFailureHandler(showError).getApprovedApplicantsForMatching(CURRENT_DOG_ID);
+}
+function setApplicantMatch(appID,status){google.script.run.withSuccessHandler(()=>{toast('Match status updated.');openDogMatching()}).withFailureHandler(showError).recordDogApplicantInterest(CURRENT_DOG_ID,appID,status)}
+function openReferenceEntry(){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById('referenceEntry').classList.remove('hidden')}
+function saveDetailedReference(e){
+ e.preventDefault();const fd=new FormData(e.target);
+ const data={applicationID:CURRENT_APPLICATION_ID,referenceType:fd.get('referenceType'),status:fd.get('status'),summary:fd.get('summary'),concernFlag:fd.get('concernFlag')==='on'};
+ google.script.run.withSuccessHandler(()=>{toast('Reference check recorded.');e.target.reset();openApplication(CURRENT_APPLICATION_ID)}).withFailureHandler(showError).addDetailedReferenceCheck(data);
+}
+</script>

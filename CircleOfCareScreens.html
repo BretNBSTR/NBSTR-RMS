@@ -1,0 +1,18 @@
+<section id="circleOfCare" class="page hidden">
+<header><div><button class="linkbtn" onclick="openDog(CURRENT_DOG_ID)">← Dog Profile</button><h1>Circle of Care</h1><p id="careDogMeta"></p></div></header>
+<div class="cards">
+ <div class="card metric"><span>Required Intake Complete</span><b id="carePercent">—</b></div>
+ <div class="card metric"><span>Completed</span><b id="careCompleted">—</b></div>
+ <div class="card metric"><span>Missing / Open</span><b id="careMissing">—</b></div>
+ <div class="card metric"><span>Linked Documents</span><b id="careDocs">—</b></div>
+</div>
+<div class="detail-grid">
+ <div class="card"><h2>Dog Journey</h2><div id="careStages"></div></div>
+ <div class="card"><h2>Nothing Forgotten</h2><div id="careAlerts"></div></div>
+</div>
+</section>
+
+<section id="dogAttention" class="page hidden">
+<header><div><h1>Dogs Needing Attention</h1><p>Open Circle of Care items across active NBSTR dogs.</p></div></header>
+<div class="card"><div id="dogAttentionList" class="list loading">Loading…</div></div>
+</section>

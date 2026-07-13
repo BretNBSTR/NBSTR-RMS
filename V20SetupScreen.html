@@ -1,0 +1,17 @@
+<section id="v20Setup" class="page hidden">
+<header><div><h1>NBSTR RMS v2.0 Pilot Setup</h1><p>One setup and test center for the controlled NBSTR pilot.</p></div></header>
+<div class="cards">
+ <div class="card metric"><span>Setup Complete</span><b id="v20Percent">—</b></div>
+ <div class="card metric"><span>Launch Audit</span><b id="v20Ready">—</b></div>
+ <div class="card metric"><span>Closing Attention</span><b id="v20Closing">—</b></div>
+ <div class="card metric"><span>Finance Review</span><b id="v20Finance">—</b></div>
+</div>
+<div class="card">
+ <div class="circle-note"><strong>CONTROLLED PILOT:</strong> v2.0 does not activate live form triggers or import historical applications.</div>
+ <div class="button-row"><button class="primary" onclick="runV20Wizard()">Run Setup Wizard</button><button class="secondary" onclick="seedV20()">Seed Fake Pilot Data</button><button class="secondary" onclick="auditV20()">Run Full Audit</button></div>
+</div>
+<div class="detail-grid topgap">
+ <div class="card"><h2>Setup Checks</h2><div id="v20Checks"></div></div>
+ <div class="card"><h2>Launch Blockers</h2><div id="v20Blockers"></div></div>
+</div>
+</section>

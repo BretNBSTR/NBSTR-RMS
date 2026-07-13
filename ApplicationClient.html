@@ -1,0 +1,38 @@
+<script>
+let CURRENT_APPLICATION_ID='';
+function loadApplications(){
+ google.script.run.withSuccessHandler(rows=>{
+  const el=document.getElementById('applicationList');el.classList.remove('loading');
+  el.innerHTML=rows.length?rows.map(a=>`<div class="list-item clickable" onclick="openApplication('${esc(a.id)}')"><div class="item-title">${esc(a.name)}</div><div class="meta"><span class="badge">${esc(a.status)}</span>${esc(a.id)} · ${esc([a.city,a.state].filter(Boolean).join(', '))}</div></div>`).join(''):'<div class="empty">No applications.</div>';
+ }).withFailureHandler(showError).getApplicationsForUI();
+}
+function saveApplication(e){
+ e.preventDefault();const b=document.getElementById('appSaveBtn');b.disabled=true;b.textContent='Saving…';
+ const data=Object.fromEntries(new FormData(e.target).entries());
+ google.script.run.withSuccessHandler(r=>{toast(r.message);e.target.reset();b.disabled=false;b.textContent='Receive Application';openApplication(r.id)}).withFailureHandler(err=>{b.disabled=false;b.textContent='Receive Application';showError(err)}).submitApplicationToRMS(data);
+}
+function openApplication(id){CURRENT_APPLICATION_ID=id;google.script.run.withSuccessHandler(renderApplication).withFailureHandler(showError).getApplicationDetailForUI(id)}
+function renderApplication(d){
+ const a=d.application,p=d.person;CURRENT_APPLICATION_ID=a.ApplicationID;
+ document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById('applicationDetail').classList.remove('hidden');
+ document.getElementById('appName').textContent=[p.FirstName,p.LastName].filter(Boolean).join(' ')||a.ApplicationID;
+ document.getElementById('appMeta').textContent=a.ApplicationID+' · '+a.Status;
+ const facts=[['Email',p.Email],['Phone',p.Phone],['Location',[p.City,p.State,p.ZIP].filter(Boolean).join(', ')],['Valid Through',formatDate(a.ValidThrough)],['Background Check',a.BackgroundCheckStatus],['Coordinator Review',a.CoordinatorReviewStatus],['PetPoint',a.PetPointEntryStatus]];
+ document.getElementById('appFacts').innerHTML=facts.map(x=>`<div class="fact"><span>${esc(x[0])}</span><div>${esc(x[1]||'Unknown')}</div></div>`).join('');
+ let actions='';
+ if(a.Status==='Received'||a.Status==='Reference Check') actions='<button class="primary" onclick="finishReferences()">Complete Reference Stage</button>';
+ if(a.Status==='Background Check') actions='<button class="primary" onclick="backgroundDecision(\'Verified\')">Background Verified</button> <button class="secondary" onclick="backgroundDecision(\'Review Needed\')">Review Needed</button>';
+ if(a.Status==='Coordinator Review') actions='<button class="primary" onclick="coordinatorDecision(\'Approved\')">Approve</button> <button class="secondary" onclick="coordinatorDecision(\'More Information\')">Need More Information</button> <button class="secondary" onclick="coordinatorDecision(\'Denied\')">Deny</button>';
+ if(a.Status==='Ready for Foster Visibility') actions='<button class="primary" onclick="makeFosterVisible()">Make Visible to Foster Team</button>';
+ if(a.PetPointEntryStatus==='Pending') actions+=' <button class="secondary" onclick="petPointComplete()">PetPoint Entry Complete</button>';
+ document.getElementById('appActions').innerHTML=actions||'<div class="empty">No manual workflow action available at this stage.</div>';
+ const active=d.tasks.filter(t=>['Open','In Progress','Waiting'].includes(t.status));
+ document.getElementById('appTasks').innerHTML=active.length?active.map(t=>`<div class="list-item"><div class="item-title">${esc(t.title)}</div><div class="meta"><span class="badge">${esc(t.priority)}</span>${esc(t.assignedRole)}</div></div>`).join(''):'<div class="empty">No active application tasks.</div>';
+ document.getElementById('appHistory').innerHTML=d.history.length?d.history.map(h=>`<div class="list-item"><div class="item-title">${esc(h.Action)}</div><div class="meta">${esc(h.FromStatus||'Start')} → ${esc(h.ToStatus||'—')} · ${formatDate(h.ChangedAt)}</div>${h.Notes?`<div class="meta">${esc(h.Notes)}</div>`:''}</div>`).join(''):'<div class="empty">No workflow history.</div>';
+}
+function finishReferences(){const s=prompt('Reference check summary:');if(!s||!s.trim())return;const concern=confirm('Were any concerns identified? Click OK for Yes, Cancel for No.');google.script.run.withSuccessHandler(renderApplication).withFailureHandler(showError).completeReferenceStage(CURRENT_APPLICATION_ID,s,concern)}
+function backgroundDecision(s){const n=prompt('Background check notes (optional):')||'';google.script.run.withSuccessHandler(renderApplication).withFailureHandler(showError).verifyApplicationBackground(CURRENT_APPLICATION_ID,s,n)}
+function coordinatorDecision(d){const n=prompt('Coordinator decision notes:')||'';google.script.run.withSuccessHandler(renderApplication).withFailureHandler(showError).coordinatorApplicationDecision(CURRENT_APPLICATION_ID,d,n)}
+function makeFosterVisible(){const n=prompt('Visibility/distribution notes (optional):')||'';google.script.run.withSuccessHandler(renderApplication).withFailureHandler(showError).markApplicationFosterVisible(CURRENT_APPLICATION_ID,n)}
+function petPointComplete(){const n=prompt('PetPoint reference or note (optional):')||'';google.script.run.withSuccessHandler(renderApplication).withFailureHandler(showError).markApplicantPetPointComplete(CURRENT_APPLICATION_ID,n)}
+</script>

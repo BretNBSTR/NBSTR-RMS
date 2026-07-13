@@ -1,0 +1,16 @@
+<script>
+let DOCUMENT_RECORD_TYPE='',DOCUMENT_RECORD_ID='';
+function openDocuments(type,id){
+ DOCUMENT_RECORD_TYPE=type;DOCUMENT_RECORD_ID=id;
+ document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
+ document.getElementById('documents').classList.remove('hidden');
+ document.getElementById('documentRecordMeta').textContent=type+' · '+id;
+ google.script.run.withSuccessHandler(rows=>{
+  const el=document.getElementById('documentList');el.classList.remove('loading');
+  el.innerHTML=rows.length?rows.map(d=>`<div class="list-item"><div class="item-title">${esc(d.type)} — ${esc(d.name)}</div><div class="meta">${formatDate(d.uploadedAt)}</div><button class="secondary smallbtn" onclick="window.open('${esc(d.url)}','_blank')">Open in Drive</button></div>`).join(''):'<div class="empty">No documents linked yet.</div>';
+ }).withFailureHandler(showError).getDocumentsForRecord(type,id);
+}
+function returnFromDocuments(){if(DOCUMENT_RECORD_TYPE==='Dog')openDog(DOCUMENT_RECORD_ID);else openApplication(DOCUMENT_RECORD_ID)}
+function ensureDogFolder(){google.script.run.withSuccessHandler(r=>toast(r.message)).withFailureHandler(showError).createDogDriveFolder(CURRENT_DOG_ID)}
+function ensureApplicationFolder(){google.script.run.withSuccessHandler(r=>toast(r.message)).withFailureHandler(showError).createApplicationDriveFolder(CURRENT_APPLICATION_ID)}
+</script>

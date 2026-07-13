@@ -1,0 +1,12 @@
+<script>
+let CURRENT_V21_RUN='';
+function loadPilotRunnerV21(){google.script.run.withSuccessHandler(r=>{if(r)renderPilotV21(r)}).withFailureHandler(showError).getLatestV21PilotRun()}
+function startPilotV21(){google.script.run.withSuccessHandler(renderPilotV21).withFailureHandler(showError).startV21PilotRun()}
+function renderPilotV21(d){
+ CURRENT_V21_RUN=d.run.PilotRunID;
+ document.getElementById('pilotV21Summary').innerHTML=`<div class="card metric"><span>Status</span><b>${esc(d.run.Status)}</b></div><div class="card metric"><span>Passed</span><b>${d.run.Passed}</b></div><div class="card metric"><span>Failed</span><b>${d.run.Failed}</b></div><div class="card metric"><span>Blocked</span><b>${d.run.Blocked}</b></div>`;
+ document.getElementById('pilotV21Steps').innerHTML=d.steps.map(s=>`<div class="card topgap"><div class="item-title">Step ${s.number}: ${esc(s.name)}</div><div class="meta">${esc(s.mode)} · ${esc(s.status)}</div><div class="meta">${esc(s.detail||'')}</div><div class="button-row compact">${s.mode==='AUTO'?`<button class="primary tiny" onclick="runAutoV21(${s.number})">Run Test</button>`:`<button class="secondary tiny" onclick="markV21(${s.number},'Pass')">Pass</button><button class="secondary tiny" onclick="markV21(${s.number},'Blocked')">Blocked</button><button class="secondary tiny" onclick="markV21(${s.number},'Fail')">Fail</button>`}</div></div>`).join('');
+}
+function runAutoV21(n){google.script.run.withSuccessHandler(renderPilotV21).withFailureHandler(showError).runV21AutomaticStep(CURRENT_V21_RUN,n)}
+function markV21(n,status){const detail=prompt('Pilot note for this result:')||'';google.script.run.withSuccessHandler(renderPilotV21).withFailureHandler(showError).markV21ManualStep(CURRENT_V21_RUN,n,status,detail)}
+</script>

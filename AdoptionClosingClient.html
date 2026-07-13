@@ -1,0 +1,44 @@
+<script>
+let CURRENT_CLOSING=null;
+function loadAdoptionClosing(){
+ const id=document.getElementById('closingAdoptionID').value.trim();
+ google.script.run.withSuccessHandler(renderClosing).withFailureHandler(showError).initializeAdoptionClosingV18(id);
+}
+function reconcileAdoptionClosing(){
+ const id=document.getElementById('closingAdoptionID').value.trim();
+ google.script.run.withSuccessHandler(renderClosing).withFailureHandler(showError).reconcileAdoptionClosingV18(id);
+}
+function renderClosing(data){
+ CURRENT_CLOSING=data;
+ const s=document.getElementById('closingSummary'); s.classList.remove('hidden');
+ s.innerHTML='<h2>'+data.percent+'% Complete</h2><p>'+data.completeCount+' of '+data.requiredCount+' required items complete.</p>';
+ document.getElementById('closingItems').innerHTML=data.items.map(i=>`
+ <div class="card closing-row">
+  <div><strong>${escapeHtml(i.ItemType)}</strong><div class="meta">${escapeHtml(i.RequiredStatus)}</div></div>
+  <select onchange="updateClosingItem('${i.ClosingItemID}',this.value)">
+   ${['Missing','Received','Verified','Completed','Not Applicable'].map(x=>`<option ${String(i.ItemStatus)===x?'selected':''}>${x}</option>`).join('')}
+  </select>
+ </div>`).join('');
+ document.getElementById('closeAdoptionBtn').classList.toggle('hidden',!data.canClose);
+}
+function updateClosingItem(id,status){
+ google.script.run.withSuccessHandler(renderClosing).withFailureHandler(showError).updateAdoptionClosingItemV18(id,status,'');
+}
+function closeAdoptionNow(){
+ if(!confirm('Close this adoption and mark the Circle of Care complete?'))return;
+ google.script.run.withSuccessHandler(r=>{toast(r.message);loadAdoptionClosing();}).withFailureHandler(showError).closeAdoptionV18(CURRENT_CLOSING.adoptionID);
+}
+function loadClosingAttention(){
+ google.script.run.withSuccessHandler(rows=>{
+  document.getElementById('closingAttentionList').innerHTML=rows.length?rows.map(x=>`
+   <div class="card attention-card" onclick="openClosing('${x.AdoptionID}')">
+    <strong>${escapeHtml(x.DogName||x.AdoptionID)}</strong>
+    <div>${x.Percent}% complete · ${x.MissingCount} required item(s) missing</div>
+    <div class="meta">${escapeHtml(x.MissingItems)}</div>
+   </div>`).join(''):'<div class="empty-state">No open adoptions have missing required closing items.</div>';
+ }).withFailureHandler(showError).getAdoptionsNeedingClosingAttentionV18();
+}
+function openClosing(id){
+ document.getElementById('closingAdoptionID').value=id;showPage('adoptionClosing');loadAdoptionClosing();
+}
+</script>

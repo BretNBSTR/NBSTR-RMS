@@ -1,0 +1,17 @@
+<section id="dogMatching" class="page hidden">
+<header><div><button class="linkbtn" onclick="openDog(CURRENT_DOG_ID)">← Dog Profile</button><h1>Approved Applicant Matching</h1><p id="matchDogMeta"></p></div></header>
+<div class="card"><div class="circle-note">Scores organize information only. The foster and NBSTR team make the match decision.</div><div id="applicantMatches" class="list loading">Loading…</div></div>
+</section>
+
+<section id="referenceEntry" class="page hidden">
+<header><div><button class="linkbtn" onclick="openApplication(CURRENT_APPLICATION_ID)">← Application</button><h1>Record Reference Check</h1></div></header>
+<form class="card form-card" onsubmit="saveDetailedReference(event)">
+<div class="form-grid">
+<label>Reference Type*<select name="referenceType" required><option>Veterinary</option><option>Personal</option><option>Groomer</option><option>Landlord</option><option>Other</option></select></label>
+<label>Status*<select name="status" required><option>Complete</option><option>Unable to Verify</option><option>Concern</option></select></label>
+<label class="check"><input type="checkbox" name="concernFlag"> Concern Flag</label>
+</div>
+<label>Summary*<textarea name="summary" rows="7" required></textarea></label>
+<div class="actions"><button type="button" class="secondary" onclick="openApplication(CURRENT_APPLICATION_ID)">Cancel</button><button class="primary">Save Reference Check</button></div>
+</form>
+</section>

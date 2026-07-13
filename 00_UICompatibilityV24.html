@@ -1,0 +1,7 @@
+<script>
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escapeHtml(v){return esc(v);}
+function formatDate(v){if(!v)return '';const d=new Date(v);return isNaN(d)?String(v):d.toLocaleDateString();}
+function showError(e){alert((e&&e.message)||String(e||'Unknown RMS error'));}
+function toast(message){if(typeof window!=='undefined'&&window.console)console.log(message);alert(message);}
+</script>
