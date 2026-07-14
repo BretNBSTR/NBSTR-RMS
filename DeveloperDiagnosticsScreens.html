@@ -1,0 +1,48 @@
+<div id="developerDiagnostics" class="page">
+  <div class="page-header">
+    <div>
+      <h1>Developer Diagnostics</h1>
+      <div class="subtitle">NBSTR RMS system health and launch diagnostics</div>
+    </div>
+
+    <button class="primary" onclick="loadDeveloperDiagnosticsV21()">
+      Run Diagnostics
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">System Health</div>
+      <div class="stat-value" id="diagScore">—</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Healthy</div>
+      <div class="stat-value" id="diagHealthy">—</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Warnings</div>
+      <div class="stat-value" id="diagWarnings">—</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Errors</div>
+      <div class="stat-value" id="diagErrors">—</div>
+    </div>
+  </div>
+
+  <div class="card topgap">
+    <div class="item-title">Diagnostic Results</div>
+    <div id="diagnosticSections" class="loading">
+      Run diagnostics to check system health.
+    </div>
+  </div>
+
+  <div class="card topgap">
+    <div class="meta">
+      Diagnostic duration:
+      <span id="diagDuration">—</span>
+    </div>
+  </div>
+</div>
