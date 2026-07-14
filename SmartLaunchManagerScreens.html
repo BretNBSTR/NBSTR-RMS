@@ -1,0 +1,43 @@
+<div id="smartLaunchManager" class="page">
+  <div class="page-header">
+    <div>
+      <h1>Smart Launch Manager</h1>
+      <div class="subtitle">
+        Complete launch requirements and track production readiness
+      </div>
+    </div>
+
+    <button class="primary" onclick="loadSmartLaunchManagerV21()">
+      Refresh
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Launch Status</div>
+      <div class="stat-value" id="launchManagerStatus">—</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Complete</div>
+      <div class="stat-value" id="launchManagerComplete">—</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Open</div>
+      <div class="stat-value" id="launchManagerOpen">—</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Critical Open</div>
+      <div class="stat-value" id="launchManagerCritical">—</div>
+    </div>
+  </div>
+
+  <div class="card topgap">
+    <div class="item-title">Launch Checklist</div>
+    <div id="smartLaunchChecklist" class="loading">
+      Loading launch checklist...
+    </div>
+  </div>
+</div>

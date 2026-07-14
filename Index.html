@@ -181,6 +181,7 @@
     <button onclick="showPage('referenceEntry')">Reference Check</button>
     <button onclick="showPage('pilot')">Controlled Pilot</button>
     <button onclick="showPage('developerDiagnostics')">Developer Diagnostics</button>
+    <button onclick="showPage('smartLaunchManager')">Smart Launch Manager</button>
     <button onclick="showPage('v20Setup')">Pilot Setup</button>
   </nav>
 
@@ -190,6 +191,7 @@
     <?!= HtmlService.createHtmlOutputFromFile('MatchingScreens').getContent(); ?>
     <?!= HtmlService.createHtmlOutputFromFile('PilotScreens').getContent(); ?>
     <?!= HtmlService.createHtmlOutputFromFile('DeveloperDiagnosticsScreens').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('SmartLaunchManagerScreens').getContent(); ?>
     <?!= HtmlService.createHtmlOutputFromFile('V20SetupScreen').getContent(); ?>
 
   </main>
@@ -219,6 +221,10 @@ if (name === 'volunteerHome' && typeof loadVolunteerHome === 'function') {
     loadDeveloperDiagnosticsV21();
   }
 
+  if (name === 'smartLaunchManager' && typeof loadSmartLaunchManagerV21 === 'function') {
+    loadSmartLaunchManagerV21();
+  }
+
   if (name === 'v20Setup' && typeof loadV20Setup === 'function') {
     loadV20Setup();
   }
@@ -246,6 +252,7 @@ function toast(message) {
 <?!= HtmlService.createHtmlOutputFromFile('MatchingClient').getContent(); ?>
 <?!= HtmlService.createHtmlOutputFromFile('PilotClient').getContent(); ?>
 <?!= HtmlService.createHtmlOutputFromFile('DeveloperDiagnosticsClient').getContent(); ?>
+<?!= HtmlService.createHtmlOutputFromFile('SmartLaunchManagerClient').getContent(); ?>
 <?!= HtmlService.createHtmlOutputFromFile('V20SetupClient').getContent(); ?>
 
 <script>
