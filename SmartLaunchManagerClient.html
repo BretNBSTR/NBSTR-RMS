@@ -1,0 +1,58 @@
+<script>
+function loadSmartLaunchManagerV21(){
+  const el=document.getElementById('smartLaunchChecklist');
+  el.classList.add('loading');
+  el.textContent='Loading launch checklist...';
+
+  google.script.run
+    .withSuccessHandler(renderSmartLaunchManagerV21)
+    .withFailureHandler(showError)
+    .getSmartLaunchManagerV21();
+}
+
+function renderSmartLaunchManagerV21(d){
+  document.getElementById('launchManagerStatus').textContent=
+    d.launchReady?'READY':'BLOCKED';
+  document.getElementById('launchManagerComplete').textContent=d.complete;
+  document.getElementById('launchManagerOpen').textContent=d.open;
+  document.getElementById('launchManagerCritical').textContent=d.criticalOpen;
+
+  const el=document.getElementById('smartLaunchChecklist');
+  el.classList.remove('loading');
+
+  el.innerHTML=d.items.map(item=>`
+    <div class="list-item ${item.critical&&item.status!=='Complete'?'high':''}">
+      <div class="item-title">${esc(item.itemName)}</div>
+      <div class="meta">
+        <span class="badge">${esc(item.category)}</span>
+        ${item.critical?'Critical · ':''}${esc(item.status)}
+      </div>
+
+      ${item.notes?`<div class="meta">${esc(item.notes)}</div>`:''}
+
+      <div class="topgap">
+        ${item.status==='Complete'
+          ?`<button onclick="reopenLaunchItemV21('${esc(item.launchChecklistID)}')">Reopen</button>`
+          :`<button class="primary" onclick="completeLaunchItemV21('${esc(item.launchChecklistID)}')">Complete</button>`
+        }
+      </div>
+    </div>
+  `).join('');
+}
+
+function completeLaunchItemV21(id){
+  const notes=prompt('Completion notes:','')||'';
+
+  google.script.run
+    .withSuccessHandler(renderSmartLaunchManagerV21)
+    .withFailureHandler(showError)
+    .completeLaunchChecklistItemV21(id,notes);
+}
+
+function reopenLaunchItemV21(id){
+  google.script.run
+    .withSuccessHandler(renderSmartLaunchManagerV21)
+    .withFailureHandler(showError)
+    .reopenLaunchChecklistItemV21(id);
+}
+</script>
