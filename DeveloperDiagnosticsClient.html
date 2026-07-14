@@ -1,0 +1,36 @@
+<script>
+function loadDeveloperDiagnosticsV21(){
+ const el=document.getElementById('diagnosticSections');
+ el.classList.add('loading');
+ el.textContent='Running diagnostics...';
+
+ google.script.run
+  .withSuccessHandler(renderDeveloperDiagnosticsV21)
+  .withFailureHandler(showError)
+  .getDeveloperDiagnosticsV21();
+}
+
+function renderDeveloperDiagnosticsV21(d){
+ document.getElementById('diagScore').textContent=d.score+'%';
+ document.getElementById('diagHealthy').textContent=d.healthy;
+ document.getElementById('diagWarnings').textContent=d.warnings;
+ document.getElementById('diagErrors').textContent=d.errors;
+ document.getElementById('diagDuration').textContent=d.durationMs+' ms';
+
+ const el=document.getElementById('diagnosticSections');
+ el.classList.remove('loading');
+
+ el.innerHTML=d.sections.map(s=>`
+  <div class="list-item ${s.status==='Error'?'high':''}">
+   <div class="item-title">${esc(s.name)}</div>
+   <div class="meta">
+    <span class="badge">${esc(s.status)}</span>
+    ${esc(s.summary)}
+   </div>
+   ${s.issues.length?s.issues.map(i=>`
+    <div class="meta">• ${esc(i.detail)}</div>
+   `).join(''):''}
+  </div>
+ `).join('');
+}
+</script>
