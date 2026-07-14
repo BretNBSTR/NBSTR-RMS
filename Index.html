@@ -180,6 +180,7 @@
     <button onclick="showPage('dogMatching')">Applicant Matching</button>
     <button onclick="showPage('referenceEntry')">Reference Check</button>
     <button onclick="showPage('pilot')">Controlled Pilot</button>
+    <button onclick="showPage('developerDiagnostics')">Developer Diagnostics</button>
     <button onclick="showPage('v20Setup')">Pilot Setup</button>
   </nav>
 
@@ -212,6 +213,10 @@ if (name === 'volunteerHome' && typeof loadVolunteerHome === 'function') {
 }
   if (name === 'pilot' && typeof loadPilot === 'function') {
     loadPilot();
+  }
+
+  if (name === 'developerDiagnostics' && typeof loadDeveloperDiagnosticsV21 === 'function') {
+    loadDeveloperDiagnosticsV21();
   }
 
   if (name === 'v20Setup' && typeof loadV20Setup === 'function') {
