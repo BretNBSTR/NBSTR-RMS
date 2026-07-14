@@ -29,7 +29,7 @@ function getDeveloperDiagnosticsV21() {
     : 0;
 
   return {
-    generatedAt: new Date(),
+    generatedAt: new Date().toISOString(),
     durationMs: new Date().getTime() - startedAt.getTime(),
     score: score,
     errors: errors,
